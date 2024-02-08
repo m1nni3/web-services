@@ -1,0 +1,504 @@
+/* this assumes popovers have headers */
+.bs-popover-auto[data-popper-placement^=bottom]>.popover-arrow::after,
+.bs-popover-bottom>.popover-arrow::after {
+  border-bottom-color: var(--bs-popover-header-bg);
+}
+
+h1 { margin-bottom: 1.5rem; }
+h1 .main { display: block; font-size: 65%; }
+h1 .titleb { display: block; }
+h1 .main:last-child { font-size: 100%; }
+
+.h-mnm, .modal-title, #realcontent h2:not(.standard) { 
+  font-family: OpenSansCond;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+.h-cond { 
+  font-family: OpenSansCond;
+  font-weight: normal;
+}
+#realcontent h2:not(.standard), .h-mnm-h2 {
+  font-size: 2.25rem;
+}
+a.highlight {
+  font-weight: bold;
+}
+b.highlight {
+  font-weight: bold;
+  color: #048;
+}
+
+.modal-backdrop.backdrop-darker {
+  --bs-backdrop-opacity: 0.8;
+}
+
+/*#content.content-printshare {
+  margin-top: 3rem;
+}*/
+
+h1.h1-pre-printshare {
+  margin-bottom: 0.5rem;
+}
+.printshare.printshare-post-h1 {
+  margin-bottom: 1.5rem;
+}
+.no-margin-inside>* {
+  margin: 0 !important;
+}
+.no-margin-inside>h1.h1-pre-printshare {
+  margin-bottom: 0.5rem !important;
+}
+
+
+.alert.alert-secondary .btn-outline-secondary {
+  --bs-btn-bg: white;
+}
+
+.card.card-search {
+  border-color: #2A695B;
+}
+.card.card-search h2.card-header {
+  background-color: #2A695B;
+  color: white;
+}
+.search-color, h2.search-color,
+#searchModal .modal-title, #searchModal .highlight {
+  color: #2A695B;
+}
+.btn-secondary.btn-search {
+  --bs-btn-bg: #2A695B;
+  --bs-btn-border-color: #2A695B;
+  --bs-btn-hover-bg: #45a993;
+  --bs-btn-hover-border-color: #2A695B;
+  --bs-btn-active-bg: #45a993;
+  --bs-btn-active-border-color: #2A695B;
+}
+.btn-outline-secondary.btn-search {
+  --bs-btn-color: #2A695B;
+  --bs-btn-border-color: #2A695B;
+  --bs-btn-hover-bg: #45a993;
+  --bs-btn-hover-border-color: #2A695B;
+  --bs-btn-active-bg: #45a993;
+  --bs-btn-active-border-color: #2A695B;
+}
+
+.card.card-industry {
+  border-color: #AA5522;
+}
+.card.card-industry h2.card-header {
+  background-color: #AA5522;
+  color: white;
+}
+.industry-color, h2.industry-color,
+#industryModal .modal-title, #industryModal .highlight {
+  color: #AA5522;
+}
+.btn-secondary.btn-industry {
+  --bs-btn-bg: #AA5522;
+  --bs-btn-border-color: #AA5522;
+  --bs-btn-hover-bg: #dd7a3c;
+  --bs-btn-hover-border-color: #AA5522;
+  --bs-btn-active-bg: #dd7a3c;
+  --bs-btn-active-border-color: #AA5522;
+}
+.btn-outline-secondary.btn-industry {
+  --bs-btn-color: #AA5522;
+  --bs-btn-border-color: #AA5522;
+  --bs-btn-hover-bg: #dd7a3c;
+  --bs-btn-hover-border-color: #AA5522;
+  --bs-btn-active-bg: #dd7a3c;
+  --bs-btn-active-border-color: #AA5522;
+}
+
+.card.card-interests {
+  border-color: #882770;
+}
+.card.card-interests h2.card-header {
+  background-color: #882770;
+  color: white;
+}
+.interests-color, h2.interests-color,
+#interestsModal .modal-title, #interestsModal .highlight {
+  color: #882770;
+}
+.btn-secondary.btn-interests {
+  --bs-btn-bg: #882770;
+  --bs-btn-border-color: #882770;
+  --bs-btn-hover-bg: #bd3a9d;
+  --bs-btn-hover-border-color: #882770;
+  --bs-btn-active-bg: #bd3a9d;
+  --bs-btn-active-border-color: #882770;
+}
+.btn-outline-secondary.btn-interests {
+  --bs-btn-color: #882770;
+  --bs-btn-border-color: #882770;
+  --bs-btn-hover-bg: #bd3a9d;
+  --bs-btn-hover-border-color: #882770;
+  --bs-btn-active-bg: #bd3a9d;
+  --bs-btn-active-border-color: #882770;
+}
+
+.card.card-milwalk {
+  border-color: #3377bb;
+}
+.card.card-milwalk h2.card-header {
+  background-color: #3377bb;
+  color: white;
+}
+.milwalk-color, h2.milwalk-color,
+#milwalkModal .modal-title, #milwalkModal .highlight {
+  color: #3377bb;
+}
+.btn-secondary.btn-milwalk {
+  --bs-btn-bg: #3377bb;
+  --bs-btn-border-color: #3377bb;
+  --bs-btn-hover-bg: #4e96dd;
+  --bs-btn-hover-border-color: #3377bb;
+  --bs-btn-active-bg: #4e96dd;
+  --bs-btn-active-border-color: #3377bb;
+}
+.btn-outline-secondary.btn-milwalk {
+  --bs-btn-color: #3377bb;
+  --bs-btn-border-color: #3377bb;
+  --bs-btn-hover-bg: #4e96dd;
+  --bs-btn-hover-border-color: #3377bb;
+  --bs-btn-active-bg: #4e96dd;
+  --bs-btn-active-border-color: #3377bb;
+}
+.btn-secondary.btn-cluster {
+  --bs-btn-bg: #AA5522;
+  --bs-btn-border-color: #AA5522;
+  --bs-btn-hover-bg: #dd7a3c;
+  --bs-btn-hover-border-color: #AA5522;
+  --bs-btn-active-bg: #dd7a3c;
+  --bs-btn-active-border-color: #AA5522;
+}
+.btn-outline-secondary.btn-cluster {
+  --bs-btn-color: #AA5522;
+  --bs-btn-border-color: #AA5522;
+  --bs-btn-hover-bg: #dd7a3c;
+  --bs-btn-hover-border-color: #AA5522;
+  --bs-btn-active-bg: #dd7a3c;
+  --bs-btn-active-border-color: #AA5522;
+}
+.btn-secondary.btn-bright {
+  --bs-btn-bg: #EC833A;
+  --bs-btn-border-color: #EC833A;
+  --bs-btn-hover-bg: #EC833A;
+  --bs-btn-hover-border-color: #EC833A;
+  --bs-btn-active-bg: #EC833A;
+  --bs-btn-active-border-color: #EC833A;
+}
+.btn-outline-secondary.btn-bright {
+  --bs-btn-color: #EC833A;
+  --bs-btn-border-color: #EC833A;
+  --bs-btn-hover-bg: #EC833A;
+  --bs-btn-hover-border-color: #EC833A;
+  --bs-btn-active-bg: #EC833A;
+  --bs-btn-active-border-color: #EC833A;
+}
+.btn-secondary.btn-prep {
+  --bs-btn-bg: #286ABE;
+  --bs-btn-border-color: #286ABE;
+  --bs-btn-hover-bg: #48f;
+  --bs-btn-hover-border-color: #286ABE;
+  --bs-btn-active-bg: #48f;
+  --bs-btn-active-border-color: #286ABE;
+}
+.btn-outline-secondary.btn-prep {
+  --bs-btn-color: #286ABE;
+  --bs-btn-border-color: #286ABE;
+  --bs-btn-hover-bg: #48f;
+  --bs-btn-hover-border-color: #286ABE;
+  --bs-btn-active-bg: #48f;
+  --bs-btn-active-border-color: #286ABE;
+}
+
+.outlook-0,
+#outlookModal0 .modal-title, #outlookModal0 .highlight,
+#brightModal .modal-title, #brightModal .highlight {
+  color: #EC833A;
+}
+#brightModal .bright-occ-title {
+  text-transform: lowercase;
+}
+
+.outlook-1,
+#outlookModal1 .modal-title, #outlookModal1 .highlight {
+  color: #007A6B;
+}
+.outlook-2,
+#outlookModal2 .modal-title, #outlookModal2 .highlight {
+  color: #286ABE;
+}
+
+#trainingModal .modal-title, #trainingModal .highlight,
+#licensesModal .modal-title, #licensesModal .highlight,
+#apprenModal .modal-title, #apprenModal .highlight,
+#zoneModal .modal-title, #zoneModal .highlight,
+.section-ed .highlight, .ed-color {
+  color: #286ABE;
+}
+#wagesModal .modal-title, #wagesModal .highlight,
+#jobsModal .modal-title, #jobsModal .highlight,
+.section-hi .highlight, .hi-color {
+  color: #007A6B;
+}
+#hotModal .modal-title, #hotModal .highlight,
+#demandModal .modal-title, #demandModal .highlight,
+.section-te .highlight, .te-color {
+  color: #78AA68;
+}
+
+.section-kn .highlight, .kn-color { color: #570088; }
+.section-sk .highlight, .sk-color { color: #B33800; }
+.section-ab .highlight, .ab-color { color: #064597; }
+.section-pe .highlight, .pe-color { color: #9D3781; }
+.section-ex .highlight, .ex-color { color: #E16200; }
+
+.tooltip.salary-tooltip .tooltip-inner {
+  max-width: 300px;
+}
+
+.zone-box-wrapper {
+  max-width: 20rem;
+}
+.zone-box {
+  border: solid #ddd 0.4rem;
+  background: #ddd;
+  color: #286ABE;
+  padding: 0.3rem;
+  height: 2.6rem;
+  width: 2.6rem;
+  margin: 0 0.1rem 0 0;
+  font-size: 110%;
+  line-height: 1.2em;
+}
+.zone-box.zone-box-filled {
+  background: #fff;
+}
+
+
+.header-logo-container {
+  height: 70px;
+}
+.header-logo {
+  height: 70px;
+  max-width: calc(100% - 3rem);
+  border: 0;
+}
+@media screen and (max-width: 767.98px) {
+  .header-logo-container {
+    height: 50px;
+  }
+  .header-logo {
+    height: 50px;
+  }
+} 
+
+.list-group-item-stripe {
+  background: #f4f4f4;
+}
+
+.home-page-cards .card-header {
+  position: relative;
+}
+.home-page-cards .card-title {
+  background-color: rgba(255, 255, 255, 0.8);
+  position: absolute;
+  bottom: -1px;
+}
+
+.highlight1, .highlight2, .highlight3 {
+  font-weight: bold;
+  padding: 0.2rem;
+  margin: -0.2rem;
+}
+.highlight1 {
+  background-color: #fff3cd;
+  color: #554d03;
+}
+.highlight2 {
+  background-color: #cff4fc;
+  color: #055160;
+}
+.highlight3 {
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+
+.formsub { max-width: 28rem; }
+
+OL.help0 {
+  list-style-type: upper-roman;
+  font-size: 1.25rem;
+}
+OL.help1 {
+  list-style-type: upper-alpha;
+  font-size: 1rem;
+}
+OL.help2 {
+  list-style-type: decimal;
+}
+OL.help3 {
+  list-style-type: lower-alpha;
+}
+
+.popover-flush {
+  margin: -1rem;
+}
+.popover-scroll {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.sticky-top.lower-z {
+  z-index: 920 !important;
+}
+
+.w-5  { width:  5% !important; }
+.w-10 { width: 10% !important; }
+.w-15 { width: 15% !important; }
+.w-20 { width: 20% !important; }
+.w-30 { width: 30% !important; }
+.w-35 { width: 35% !important; }
+.w-40 { width: 40% !important; }
+.w-45 { width: 45% !important; }
+.w-55 { width: 55% !important; }
+.w-60 { width: 60% !important; }
+.w-65 { width: 65% !important; }
+.w-70 { width: 70% !important; }
+.w-80 { width: 80% !important; }
+.w-85 { width: 85% !important; }
+.w-90 { width: 90% !important; }
+.w-95 { width: 95% !important; }
+
+.mw-1e { min-width: 1em; }
+.mw-2e { min-width: 2em; }
+.mw-3e { min-width: 3em; }
+.mw-4e { min-width: 4em; }
+.mw-5e { min-width: 5em; }
+.mw-6e { min-width: 6em; }
+.mw-7e { min-width: 7em; }
+.mw-8e { min-width: 8em; }
+.mw-9e { min-width: 9em; }
+.mw-10e { min-width: 10em; }
+.mw-11e { min-width: 11em; }
+.mw-12e { min-width: 12em; }
+.mw-13e { min-width: 13em; }
+.mw-14e { min-width: 14em; }
+.mw-15e { min-width: 15em; }
+
+.ps-moreicon {
+  padding-left: 2.25em !important;
+}
+
+@media screen and (min-width: 576px) {
+  .ps-sm-moreicon {
+    padding-left: 2.25em !important;
+  }
+}
+
+@media screen {
+  .report-section-header {
+    position: relative;
+    top: -2rem;
+    margin-bottom: -1rem;
+  }
+  .report-section-header>span {
+    background: white;
+    padding-left: .5rem;
+    padding-right: .5rem;
+  }
+  .report-section {
+    padding-top: 1rem;
+  }
+  .section-header-prefix {
+    position: relative;
+    height: 1px;
+    top: 1.5rem;
+  }
+  .section-header {
+    position: relative;
+    margin: 0;
+  }
+  .section-header>span {
+    background: white;
+    margin-left: 2.5rem;
+    padding: 0 0.5rem;
+  }
+}
+@media print {
+  .col-print-12 {
+    width: 100% !important;
+  }
+  .report-section-border {
+    border-width: 0 !important;
+    padding: 0 !important;
+  }
+  .section-header {
+    margin: 1rem 0;
+  }
+  .zone-box-wrapper.mx-auto, .salary-wrapper.mx-auto {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .outlook-wrapper {
+    align-items: left !important;
+  }
+  .outlook-wrapper>div {
+    width: auto !important;
+  }
+};
+
+/* Adapted from https://bootsnipp.com/snippets/featured/no-more-tables-respsonsive-table */
+@media screen and (max-width: 575.98px) {
+  .table-fluid thead,
+  .table-fluid tbody,
+  .table-fluid th,
+  .table-fluid td,
+  .table-fluid tr {
+    display: block;
+  }
+  .table-fluid thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  .table-fluid tr:nth-child(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  .table-fluid tr {
+    border-top: 1px solid #dee2e6;
+  }
+  .table-fluid td {
+    border: none;
+    width: 100% !important;
+    padding-left: 35%;
+    padding-bottom: 0;
+    white-space: normal;
+    text-align: left !important;
+    position: relative;
+  }
+  .table-fluid td:last-child {
+    padding-bottom: .75rem;
+  }
+  
+  .table-fluid td:before {
+    position: absolute;
+    top: 0.75rem;
+    left: .75rem;
+    right: 65%;
+    padding-right: .5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+    font-weight: bold;
+    font-size: .8em;
+  }
+  .table-fluid td:before {
+    content: attr(data-title);
+  }
+}

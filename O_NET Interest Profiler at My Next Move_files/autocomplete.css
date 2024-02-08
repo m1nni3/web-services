@@ -1,0 +1,60 @@
+.autocomplete-menu {
+  max-width: 90vw;
+}
+.autocomplete-menu a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.autocomplete-menu.prompt li.result1,
+.autocomplete-menu.prompt li.result2,
+.autocomplete-menu.prompt li.result3,
+.autocomplete-menu.prompt li.result4,
+.autocomplete-menu.prompt li.result5,
+.autocomplete-menu.prompt li.notfound {
+  display: none !important;
+}
+.autocomplete-menu.result0 li.result1,
+.autocomplete-menu.result0 li.result2,
+.autocomplete-menu.result0 li.result3,
+.autocomplete-menu.result0 li.result4,
+.autocomplete-menu.result0 li.result5,
+.autocomplete-menu.result0 li.prompt {
+  display: none !important;
+}
+
+.autocomplete-menu.result1 li.result2,
+.autocomplete-menu.result1 li.result3,
+.autocomplete-menu.result1 li.result4,
+.autocomplete-menu.result1 li.result5,
+.autocomplete-menu.result1 li.notfound,
+.autocomplete-menu.result1 li.prompt {
+  display: none !important;
+}
+
+.autocomplete-menu.result2 li.result3,
+.autocomplete-menu.result2 li.result4,
+.autocomplete-menu.result2 li.result5,
+.autocomplete-menu.result2 li.notfound,
+.autocomplete-menu.result2 li.prompt {
+  display: none !important;
+}
+
+.autocomplete-menu.result3 li.result4,
+.autocomplete-menu.result3 li.result5,
+.autocomplete-menu.result3 li.notfound,
+.autocomplete-menu.result3 li.prompt {
+  display: none !important;
+}
+
+.autocomplete-menu.result4 li.result5,
+.autocomplete-menu.result4 li.notfound,
+.autocomplete-menu.result4 li.prompt {
+  display: none !important;
+}
+
+.autocomplete-menu.result5 li.notfound,
+.autocomplete-menu.result5 li.prompt {
+  display: none !important;
+}

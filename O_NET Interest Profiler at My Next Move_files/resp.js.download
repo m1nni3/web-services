@@ -1,0 +1,261 @@
+// polyfills
+if (!String.prototype.includes) {
+  String.prototype.includes = function(search, start) {
+    'use strict';
+    if (typeof start !== 'number') {
+      start = 0;
+    }
+    
+    if (start + search.length > this.length) {
+      return false;
+    } else {
+      return this.indexOf(search, start) !== -1;
+    }
+  };
+}
+
+// global functions
+function readCookie(name)
+{
+  if (name == '')
+    return '';
+  var cookies = '' + document.cookie;
+  if (cookies == '')
+    return '';
+  var start = cookies.indexOf(name);
+  if (start == -1)
+    return '';
+  var end = cookies.indexOf(';', start);
+  if (end == -1)
+    end = cookies.length;
+  return atob(unescape(cookies.substring(start + name.length + 1, end)));
+} // end readCookie
+  
+function setCookie(name, value)
+{
+  document.cookie = name + '=' + escape(btoa(value == null ? '' : value)) + '; path=/';
+} // end setCookie
+
+// init
+$(function() {
+  $('[data-bs-toggle~="tooltip"]').each(function(index, element) {
+    new bootstrap.Tooltip(element);
+  });
+  $('[data-bs-toggle-extra~="tooltip"]').each(function(index, element) {
+    new bootstrap.Tooltip(element);
+  });
+  $('[data-bs-toggle~="popover"]').each(function(index, element) {
+    new bootstrap.Popover(element);
+  });
+  Stickyfill.add($('.sticky-top'));
+  
+  // ensure tabs are initialized before historyTabs runs
+  $('[data-bs-toggle="tab"]').each(function(index, element) {
+    new bootstrap.Tab(element);
+  });
+  $('#page-tabs [data-bs-toggle="tab"]').historyTabs();
+  
+  var installTablesorter = function ($obj) {
+    $obj.tablesorter({
+      textSorter: {
+        '.plainsort': $.tablesorter.sortText
+      }
+    });
+  };
+  installTablesorter($('.tablesorter'));
+  
+  var installFilterable = function ($obj) {
+    $obj.filterable();
+  };
+  installFilterable($('[data-toggle="filterable"]'));
+  
+  // linktrack - may fail due to content blockers
+  var installLinkTrack = function ($obj) {
+    try {
+      $obj.linktrack();
+    } catch (error) {
+      // no response
+    }
+  };
+  installLinkTrack($('[data-toggle="linktrack"]'));
+  
+  // scrollspy
+  $('[data-counterspy]').each(function () {
+    var $this = $(this);
+    $($this.attr('data-counterspy')).scrollspy({ target: '#' + this.id, offset: 10 });
+  });
+  $(window).on('activate.bs.scrollspy', function (evt) {
+    $('[data-counterspy] .page-item.nav-item').removeClass('active');
+    $('[data-counterspy] .page-item.nav-item > .nav-link.active').parent().addClass('active');
+  });
+  
+  // page tabs
+  $('a[href^="#"]').click(function (e) {
+    var $this = $(this);
+    if ($this.is('[data-bs-toggle="tab"]')) {
+      return;
+    }
+    var fragment = $this.attr('href');
+    if ($(fragment).is('#page-panes > .tab-pane')) {
+      e.preventDefault();
+      $('#tab-' + fragment.substr(1)).tab('show');
+      $('#page-tabs').get(0).scrollIntoView();
+    }
+  });
+  
+  // rate this page
+  $('.rate-this-page').click(function (e) {
+    e.preventDefault();
+    var $this = $(this);
+    var tdata = $this.data();
+    if (!tdata.completed) {
+      $('.rate-this-page').data('completed', true);
+      $('.rate-this-page').tooltip('dispose');
+      $('.rate-this-page').not($this).css('cursor', 'default');
+      $('.rate-this-page').not($this).fadeTo('slow', 0.5);
+            
+      $.post(tdata.rateUrl,
+             { u: tdata.pageUrl,
+               t: tdata.pageTitle,
+               h: tdata.helpful
+             },
+             function (data, status, xhr) {
+               tdata.token = data.token;
+             });
+      
+      $this.attr('title', tdata.completedTitle);
+      var pop = new bootstrap.Popover(this, {
+        html: true,
+        sanitize: false,
+        placement: 'top',
+        trigger: 'manual'
+      });
+      pop.show();
+    } else {
+      bootstrap.Popover.getInstance(this).hide();
+    }
+  });
+  $('.rate-this-page').on('inserted.bs.popover', function () {
+    var $this = $(this);
+    var that = this;
+    var tdata = $this.data();
+    var $popover = $('#' + $this.attr('aria-describedby'));
+    var $mbox = $popover.find('.feedback-message');
+    var $mbtn = $popover.find('.feedback-button');
+    var $cbtn = $popover.find('.close-button');
+    $cbtn.click(function () {
+      bootstrap.Popover.getInstance(that).hide();
+    });
+    $mbtn.click(function () {
+      var comment = $mbox.val();
+      if (comment != "") {
+        $.post(tdata.rateUrl,
+               { token: tdata.token,
+                 u: tdata.pageUrl,
+                 t: tdata.pageTitle,
+                 h: tdata.helpful,
+                 comments: $mbox.val() });
+      }
+      bootstrap.Popover.getInstance(that).hide();
+    });
+  });
+  $('.rate-this-page').on('hidden.bs.popover', function () {
+    bootstrap.Popover.getInstance(this).dispose();
+    new bootstrap.Tooltip(this);
+  });
+    
+  // form validation
+  var installValidation = function ($obj) {
+    $obj.submit(function (e) {
+      if (this.checkValidity() === false) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+      $(this).addClass('was-validated');
+    });
+  };
+  installValidation($('.needs-validation'));
+  
+  // ajax forms
+  var installAjaxForm = function ($obj) {
+    $obj.find('.ajax-form-showprogress').hide();
+    $obj.find('.ajax-form-showerror').hide();
+    $obj.find('.ajax-form-showsuccess').hide();
+    $obj.find('.ajax-form-disableprogress').prop('disabled', false);
+    $obj.ajaxForm({
+      beforeSubmit: function(arr, $form, options) {
+        $form.find('.ajax-form-showerror').hide();
+        $form.find('.ajax-form-showsuccess').hide();
+        $form.find('.ajax-form-showprogress').show();
+        $form.find('.ajax-form-disableprogress').prop('disabled', true);
+      },
+      data: { ajax: 'true' },
+      error: function(xhr, status, error, $form) {
+        $form.find('.ajax-form-showprogress').hide();
+        $form.find('.ajax-form-showerror').show();
+        $form.find('.ajax-form-disableprogress').prop('disabled', false);
+      },
+      success: function(data, status, xhr, $form) {
+        $form.find('.ajax-form-showprogress').hide();
+        $form.find('.ajax-form-hidesuccess').hide();
+        $form.find('.ajax-form-showsuccess.ajax-form-fade').fadeIn();
+        $form.find('.ajax-form-showsuccess').not('.ajax-form-fade').show();
+        $form.find('.ajax-form-disableprogress').prop('disabled', false);
+      }
+    });
+  };
+  installAjaxForm($('.ajax-form'));
+
+  // modal ajax loading
+  $('.modal.ajax').on('show.bs.modal', function (e) {
+    var $button = $(e.relatedTarget);
+    var dest = $button.attr('href');
+    var $modal = $(this);
+    if ($modal.attr('data-content') != dest) {
+      $modal.attr('data-content', dest);
+      var $modalDialog = $modal.find('.modal-dialog');
+      var customClasses = $button.data('modalCustomClass');
+      if (customClasses) {
+        $modalDialog.attr('class', 'modal-dialog ' + customClasses);
+      } else {
+        $modalDialog.attr('class', 'modal-dialog ' + $modalDialog.data('defaultClass'));
+      }
+      $modal.find('.modal-body .loaded').empty();
+      $modal.find('.modal-body .loading').show();
+      $modal.find('.modal-title .loaded').empty();
+      $modal.find('.modal-title .loading').show();
+      $modal.modal('handleUpdate');
+      if (dest.includes('?')) {
+        dest += '&modal=true';
+      } else {
+        dest += '?modal=true';
+      }
+      $.get({
+        url: dest,
+        dataType: 'html',
+        success: function (data) {
+          var $data = $(data);
+          var $content = $data.find('#content');
+          $modal.find('.modal-body .loading').hide();
+          $modal.find('.modal-body .loaded').append($content.children());
+          var $titlefull = $modal.find('.modal-body .loaded h1').first();
+          $modal.find('.modal-title .loaded').append($titlefull.find('.main'));
+          $titlefull.remove();
+          $modal.find('.modal-title .loading').hide();
+          $modal.modal('handleUpdate');
+          
+          // install any JS hooks on new content
+          var $loaded = $modal.find('.modal-body .loaded');
+          $loaded.find('[data-bs-toggle~="tooltip"]').tooltip();
+          $loaded.find('[data-bs-toggle-extra~="tooltip"]').tooltip();
+          $loaded.find('[data-bs-toggle~="popover"]').popover();
+          installTablesorter($loaded.find('.tablesorter'));
+          installValidation($loaded.find('.needs-validation'));
+          installAjaxForm($loaded.find('.ajax-form'));
+          installFilterable($loaded.find('[data-toggle="filterable"]'));
+          installLinkTrack($loaded.find('[data-toggle="linktrack"]'));
+        }});
+    }
+  });
+  
+});

@@ -1,0 +1,600 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- saved from url=(0067)https://www.mynextmove.org/explore/ip-legacy?client=center_internal -->
+<html lang="en" class=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<link rel="alternate" type="application/rss+xml" href="https://www.onetcenter.org/rss/whatsnew.xml">
+<link rel="apple-touch-icon" sizes="180x180" href="https://www.mynextmove.org/apple-touch-icon.png?v=20201126">
+<link rel="icon" type="image/png" sizes="32x32" href="https://www.mynextmove.org/favicon-32x32.png?v=20201126">
+<link rel="icon" type="image/png" sizes="16x16" href="https://www.mynextmove.org/favicon-16x16.png?v=20201126">
+<link rel="manifest" href="https://www.mynextmove.org/site.webmanifest?v=20201126">
+<link rel="shortcut icon" href="https://www.mynextmove.org/favicon.ico?v=20201126">
+<meta name="msapplication-TileColor" content="#2d89ef">
+<meta name="theme-color" content="#004488">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="O*NET Interest Profiler at My Next Move">
+<meta name="twitter:creator" content="@onet_center">
+<meta name="twitter:image" content="https://www.mynextmove.org/shared/image/promo/mnm.jpg">
+
+<meta name="twitter:image:alt" content="Student using a laptop and a smartphone">
+
+<meta name="twitter:description" content="My Next Move provides streamlined career search and discovery for students and job seekers. Includes a built-in interest assessment and access to training, education, and job opportunities. Straightforward, easy-to-read one-page career reports help guide individuals’ next move on their road to a satisfying career.">
+
+<link rel="stylesheet" type="text/css" href="./bubblepop-1.0.css">
+<link rel="stylesheet" type="text/css" href="./jquery.fancybox.css">
+<link rel="stylesheet" type="text/css" href="./base.css">
+<link rel="stylesheet" type="text/css" href="./header.css">
+<link rel="stylesheet" type="text/css" href="./css_main.css">
+<link rel="stylesheet" type="text/css" href="./main.css">
+<script type="text/javascript" src="./jquery-3.5.1.min.js.download"></script>
+<script type="text/javascript" src="./bubblepop-1.0.js.download"></script>
+<script type="text/javascript" src="./linktrack(1).js.download"></script>
+<script type="text/javascript" src="./jquery.fancybox.pack.js.download"></script>
+<script type="text/javascript" src="./base.js.download"></script>
+<script type="text/javascript" src="./js_main.js.download"></script>
+<style type="text/css">
+DIV#intranet {
+  display: none;
+}
+
+
+
+</style>
+<script type="text/javascript">
+function helpwin()
+{
+  var win = window.open("/explore/ip-help", "window_help",
+                        "menubar=0,toolbar=0,location=0,directories=0," +
+                        "status=0,scrollbars=1,resizable=1," +
+                        "width=600,height=500");
+  win.focus();
+  return false;
+}
+
+function find(arr, item)
+{
+  var len = arr.length;
+  var idx;
+  for (idx = 0; idx < len; idx++)
+  {
+    if (arr[idx] == item)
+      return idx;
+  }
+  return -1;
+}
+
+function hover(id, which)
+{
+  var item = document.getElementById(id);
+  if (item)
+  {
+    var path = item.src;
+    var path2;
+    if (path)
+    {
+      path2 = path.replace("_ovr.gif", ".gif");     // turn off
+      if (which)
+        path2 = path.replace(".gif", "_ovr.gif");   // turn on
+      item.src = path2;
+    }
+  }
+}
+
+function graphhover(start, which)
+{
+  var bar = document.getElementById("graph" + which);
+  var legend = document.getElementById("legend" + which);
+  var name = document.getElementById("cname" + which);
+  var score = document.getElementById("cscore" + which);
+  
+  if (start)
+  {
+    if (bar)
+      bar.className = "graph" + which + "_ovr";
+    if (legend)
+      legend.className = "legend" + which + "_ovr";
+    if (name)
+      name.className = "chart" + which + "_ovr";
+    if (score)
+      score.className = "chart" + which + "_ovr";
+  }
+  else
+  {
+    if (bar)
+    {
+      if (document.getElementById("graphsel"))
+        bar.className = "graph" + which + "_dim";
+      else
+        bar.className = "graph" + which;
+    }
+    if (legend)
+      legend.className = "legend" + which;
+    if (name)
+      name.className = "chart" + which;
+    if (score)
+      score.className = "chart" + which;
+  }
+}
+
+function able(id, which)
+{
+  var item = document.forms['toolsform'].elements[id];
+  if (item)
+  {
+    if (item.length)
+    {
+      for (i = item.length - 1; i >= 0; i--)
+      {
+        item[i].disabled = which;
+        if (item[i].src)
+          alert(item[i].src);
+      }
+    }
+    else
+    {
+      item.disabled = which;
+      if (item.src)
+        alert(item.src);
+    }
+  }
+}
+function enable(id)
+{
+  able(id, false);
+}
+function disable(id)
+{
+  able(id, true);
+}
+
+var nextDisabled = '';
+function set_next(msg)
+{
+  nextDisabled = msg;
+  
+  var btn = document.getElementById('nextbtn');
+  if (msg.length > 0)
+    btn.src = '/image/ip/next_dis.gif';
+  else
+    btn.src = '/image/ip/next.gif';
+}
+function check_next()
+{
+  if (nextDisabled.length > 0)
+  {
+    alert(nextDisabled);
+    return false;
+  }
+  return true;
+}
+
+function checkscores(pg)
+{
+  for (var i = 0; i < 6; i++)
+  {
+    var val = document.forms['toolsform'].elements['score' + i].value;
+    if (val == null)
+    {
+      set_next("Please enter your scores for all six interests. Each score should be an integer between 0 and 40.");
+      return false;
+    }
+    var matched = val.search(/^\s*(?:40|[0123]?\d)\s*$/);
+    if (matched < 0)
+    {
+      set_next("Please enter your scores for all six interests. Each score should be an integer between 0 and 40.");
+      return false;
+    }
+  }
+  set_next('');
+  return true;
+}
+
+var progress = 0;
+function setprogress(id)
+{
+  var sofar = parseInt(id);
+  if (sofar > progress)
+  {
+    progress = sofar;
+    var num = document.getElementById("answered");
+    if (num)
+      num.replaceChild(document.createTextNode(id), num.firstChild);
+    var bar = document.getElementById("progressbar");
+    if (bar)
+      bar.style.width = (sofar * 3) + "px";
+  }
+}
+
+function doClick(id)
+{
+  if (id == 'nextbtn')
+  {
+    if (!check_next())
+      return true;
+  }
+    
+  var btn = document.getElementById(id);
+  if (btn)
+  {
+    btn.click();
+    return true;
+  }
+  return false;
+}
+
+function inTextField(event)
+{
+  var elem = event.target || event.srcElement;
+  if (elem.nodeType == 3)
+    elem = elem.parentNode;
+  
+  if (elem.tagName == "TEXTAREA" ||
+      (elem.tagName == "INPUT" && (elem.getAttribute("type") == "text")))
+  {
+      if (elem.className == "numonly")
+      {
+          var chrr = charFromCode(event.keyCode || event.which);
+          if (chrr == "0" || chrr == "1" || chrr == "2" ||
+              chrr == "3" || chrr == "4" || chrr == "5" ||
+              chrr == "6" || chrr == "7" || chrr == "8" ||
+              chrr == "9")
+              return true;
+          else
+              return false;
+      }
+      return true;
+  }
+  
+  return false;
+}
+
+var currentQuestion = 0;
+var allQuestions = new Array();
+
+function setCurrentQ(idx)
+{
+  // remove indicator on old current question
+  var elem = document.getElementById("num" + allQuestions[currentQuestion]);
+  if (elem)
+    elem.style.textDecoration = "none";
+
+  currentQuestion = idx;
+  if (currentQuestion >= allQuestions.length)
+  {
+    // no more questions on this page; allow Next
+    set_next('');
+  }
+  else
+  {
+    // activate next question if needed
+    var qid = allQuestions[currentQuestion];
+    enable(qid);
+    
+    // indicate new current question
+    elem = document.getElementById("num" + qid);
+    if (elem)
+      elem.style.textDecoration = "underline";
+  }
+}
+
+function answer(id)
+{
+  setprogress(id);
+  setCurrentQ(find(allQuestions, "res" + id) + 1);
+}
+
+function chooseInt(id)
+{
+  document.forms['toolsform'].elements['submit_page_S1_' + id].click();
+  cancelEvent(event);
+  return false;
+}
+
+function chooseInt2(id)
+{
+  document.forms['toolsform'].elements['submit_page_R3_' + id].click();
+  cancelEvent(event);
+  return false;
+}
+
+function charFromCode(code)
+{
+  if (code >= 96 && code <= 105)
+    code = code - 48;
+  return String.fromCharCode(code).toUpperCase();
+}
+
+function keyShortcut(event)
+{
+  if (!event)
+    event = window.event;
+  
+  var code = event.keyCode || event.which;
+  if (code != 13 && inTextField(event))
+    return;
+  
+  var chrr = charFromCode(code);
+  
+  if (code == 13)
+  {
+    doClick("nextbtn") || doClick("closebtn");
+    cancelEvent(event);
+    return false;
+  }
+  else if (chrr == "B")
+  {
+    doClick("backbtn");
+    cancelEvent(event);
+    return false;
+  }
+  else if (chrr == "C")
+  {
+    doClick("closebtn");
+    cancelEvent(event);
+    return false;
+  }
+  else if (chrr == "N")
+  {
+    doClick("nextbtn");
+    cancelEvent(event);
+    return false;
+  }
+  
+  if (currentQuestion < allQuestions.length)
+  {
+    if (chrr == "1" ||
+        chrr == "2" ||
+        chrr == "3" ||
+        chrr == "4" ||
+        chrr == "5")
+    {
+      var qid = allQuestions[currentQuestion];
+      var elem = document.forms['toolsform'].elements[qid];
+      
+      var idx = parseInt(chrr, 10) - 1;
+      elem[idx].click();
+      cancelEvent(event);
+      if (currentQuestion < allQuestions.length)
+      {
+        // move tab focus to next question
+        qid = allQuestions[currentQuestion];
+        elem = document.forms['toolsform'].elements[qid];
+        elem[0].focus();
+      }
+      return false;
+    }
+  }
+  
+  var page = document.forms['toolsform'].elements['page'].value;
+  var subpage = document.forms['toolsform'].elements['subpage'].value;
+  if (page == "S5" ||
+      (page == "R2" && subpage == "Z"))
+  {
+    if (chrr == "1" ||
+        chrr == "2" ||
+        chrr == "3" ||
+        chrr == "4" ||
+        chrr == "5")
+    {
+      document.forms['toolsform'].elements['newzone'][chrr - 1].click();
+      cancelEvent(event);
+      return false;
+    }
+  }
+}
+
+addHandler(document, "keydown", keyShortcut);
+
+$(document).ready(function(){
+
+    
+      var fbShow = function() {
+        $("#allcontent").attr('aria-hidden', 'true');
+        var fwrap = $(".fancybox-wrap");
+        fwrap.attr('role', 'dialog');
+        fwrap.attr('aria-hidden', 'false');
+        fwrap.focus();
+      };
+      var fbClose = function() {
+        $("#allcontent").attr('aria-hidden', 'false');
+      };
+        
+      $(".popup_ind").fancybox({
+        width : 350,
+        height : 250,
+        afterShow : fbShow,
+        afterClose : fbClose,
+        type : 'iframe'
+      });
+      $(".popup_t2hot").fancybox({
+        width : 350,
+        height : 200,
+        afterShow : fbShow,
+        afterClose : fbClose,
+        type : 'iframe'
+      });
+      $(".popup_bright").fancybox({
+        width : 350,
+        height : 240,
+        afterShow : fbShow,
+        afterClose : fbClose,
+        type : 'iframe'
+      });
+      $(".popup_jobzone").fancybox({
+        width : 700,
+        height : 450,
+        afterShow : fbShow,
+        afterClose : fbClose,
+        type : 'iframe'
+      });
+      $(".popup_training").fancybox({
+        width : 350,
+        height : 270,
+        afterShow : fbShow,
+        afterClose : fbClose,
+        type : 'iframe'
+      });
+      $(".popup_appren").fancybox({
+        width : 350,
+        height : 270,
+        afterShow : fbShow,
+        afterClose : fbClose,
+        type : 'iframe'
+      });
+      $(".popup_salary").fancybox({
+        width : 350,
+        height : 300,
+        afterShow : fbShow,
+        afterClose : fbClose,
+        type : 'iframe'
+      });
+      $(".popup_jobs").fancybox({
+        width : 350,
+        height : 350,
+        afterShow : fbShow,
+        afterClose : fbClose,
+        type : 'iframe'
+      });
+      $(".popup_military").fancybox({
+        width : 450,
+        height : 350,
+        afterShow : fbShow,
+        afterClose : fbClose,
+        type : 'iframe'
+      });
+
+var dummy2 = new popupbutton('ip_popup_share', false);
+
+function copyclicker(event) {
+  event.preventDefault();
+  var cur = $(event.currentTarget);
+  var target = $(cur.attr('data-cliptext'));
+  target.show();
+  target.select();
+  
+  var copied = false;
+  try {
+    copied = document.execCommand("copy");
+  }
+  catch (err) { copied = false; }
+  
+  document.getSelection().removeAllRanges();
+  target.hide();
+  return false;
+}
+function copyinit(id) {
+  var cel = $('#' + id);
+  cel.click(copyclicker);
+  $(cel.attr('data-cliptext')).hide();
+}
+copyinit('ip_share');
+
+
+});
+</script>
+<title>O*NET Interest Profiler at My Next Move</title>
+<style type="text/css">.fancybox-margin{margin-right:0px;}</style></head>
+<body>
+<!--[if lte IE 6]>
+<script type="text/javascript" src="/shared/base_ie6.js"></script>
+<![endif]-->
+<!--[if lte IE 7]>
+<script type="text/javascript" src="/shared/base_ie7.js"></script>
+<![endif]-->
+<a name="top"></a>
+<div id="allcontent">
+<div id="content">
+<a name="postnav" tabindex="1"></a>
+<!-- begin content -->
+<form action="https://www.mynextmove.org/explore/ip-legacy" method="POST" name="toolsform">
+<input type="hidden" name="page" value="D1">
+<input type="hidden" name="subpage" value="">
+<input type="hidden" name="results" value="------------------------------------------------------------">
+<input type="hidden" name="scores" value="">
+<input type="hidden" name="zone" value="0">
+<input type="hidden" name="maxvisit" value="D1">
+<input type="hidden" name="client" value="center_internal">
+<input type="hidden" name="accessible" value="0">
+<script type="text/javascript">
+document.forms['toolsform'].elements['accessible'].value = 0;
+</script>
+<table cellspacing="0" cellpadding="0" border="0" style="width: 850px; margin: 32px auto 0; height: 56px">
+<tbody><tr>
+<td style="width: 49px; height: 56px; background-image: url(/image/ip/main_topleft.gif)"></td>
+<td style="height: 56px; background-image: url(/image/ip/main_top.gif)"><div style="float: right"><a href="https://www.onetcenter.org/" target="_new"><img src="./onetlogo.gif" width="68" height="39" alt="O*NET in-it"></a>
+ <a href="https://www.mynextmove.org/explore/ip-help" target="_new" onclick="return helpwin()"><img src="./help.gif" width="19" height="39" alt="Help"></a></div><img src="./main_title.gif" width="232" height="39" alt="O*NET Interest Profiler"></td>
+<td style="width: 49px; height: 56px; background-image: url(/image/ip/main_topright.gif)"></td>
+</tr>
+</tbody></table>
+<table cellspacing="0" cellpadding="0" border="0" style="width: 850px; margin: 0 auto">
+<tbody><tr>
+<td style="width: 49px; background-image: url(/image/ip/main_left.gif)">&nbsp;</td>
+<td style="background-color: #ddd">
+<div class="inner"><table cellpadding="0" cellspacing="0" border="0" width="100%"><tbody><tr style="height: 320px"><td width="40%" style="margin: 0; padding: 12px; vertical-align: middle; text-align: center">
+
+<p>
+<img src="./ip_logo.gif" width="200" height="150" alt="O*NET Interest Profiler">
+</p>
+
+<p style="text-align: center; margin-top: 24px">
+<input type="submit" name="submit_page_D1_A" value="User Agreement" class="link" style="color: #555; font-size: 11px">
+<br>
+<input type="submit" name="submit_page_D1_U" value="Proper Use" class="link" style="color: #555; font-size: 11px">
+</p>
+
+<p style="text-align: center; margin-top: 24px">
+<span style="font-size: 11px">Taken the Interest Profiler before?</span><br>
+<input type="submit" name="enterscores" value="Enter scores">
+
+</p>
+
+</td><td width="60%" style="vertical-align: top; background-color: #fff; border-bottom: solid 1px #aaa; border-right: solid 1px #aaa; padding: 0 16px">
+
+<p style="font-size: 16px">
+Welcome to the O*NET Interest Profiler!
+</p>
+
+<p>
+The <b>O*NET Interest Profiler</b> can help you find out what your interests are and how they relate to the world of work. You can find out what you like to do.
+</p>
+
+<p>
+The <b>O*NET Interest Profiler</b> helps you decide what kinds of careers you might want to explore.
+</p>
+
+<p style="margin-top: 32px">
+On each screen, click the <b>Next</b> button at the bottom to continue. You can use the <b>Back</b> button at the bottom to re-read the instructions or change your answers.
+</p>
+</td></tr></tbody></table>
+</div>
+</td>
+<td style="width: 49px; background-image: url(/image/ip/main_right.gif)">&nbsp;</td>
+</tr>
+</tbody></table>
+<table cellspacing="0" cellpadding="0" border="0" style="width: 850px; margin: 0 auto; height: 44px">
+<tbody><tr>
+<td style="width: 115px; height: 44px; background-image: url(/image/ip/main_botleft.gif)">&nbsp;</td>
+<td style="height: 44px; background-image: url(/image/ip/main_bot.gif)"><table cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto; height: 44px">
+<tbody><tr>
+<td style="height: 44px"><input type="image" name="submit_page_D1" id="tab1" value="Start" src="./tab1_sel.gif" alt="Start" onmouseover="hover(&#39;tab1&#39;, true)" onmouseout="hover(&#39;tab1&#39;, false)"></td>
+<td style="height: 44px; padding: 0"><img src="./tab2_dis.gif" alt="Interests"></td>
+<td style="height: 44px; padding: 0"><img src="./tab3_dis.gif" alt="Results"></td>
+<td style="height: 44px; padding: 0"><img src="./tab4_dis.gif" alt="Job Zones"></td>
+<td style="height: 44px; padding: 0"><img src="./tab5_dis.gif" alt="Careers"></td>
+</tr>
+</tbody></table>
+</td>
+<td style="width: 115px; height: 44px; background-image: url(/image/ip/main_botright.gif)"><input type="image" name="submit_page_D2" id="nextbtn" accesskey="n" value="Next" src="./next.gif" alt="Next" onclick="return check_next()">
+</td>
+</tr>
+</tbody></table>
+</form><div style="width: 700px; height: 75px; margin: 15px auto 0">
+
+
+</div>
+<!-- end content -->
+</div>
+
+</div>
+
+</body></html>

@@ -1,0 +1,276 @@
+(function( $ ){
+
+  var bubble_active = null;
+  var bubble_html = '<div class="bubblepop_outer">' +
+    '<div class="bg">' +
+      '<div class="bg_tl"></div>' +
+      '<div class="bg_tm"></div>' +
+      '<div class="bg_tr"></div>' +
+      '<div class="bg_ml"></div>' +
+      '<div class="bg_mm"></div>' +
+      '<div class="bg_mr"></div>' +
+      '<div class="bg_bl"></div>' +
+      '<div class="bg_bm"></div>' +
+      '<div class="bg_br"></div>' +
+    '</div>' +
+    '<div class="bubblepop_content">' +
+      '<a class="close_btn"><span class="label">Close</span></a>' +
+      '<div class="content_placeholder"></div>' +
+    '</div>' +
+    '</div>';
+  
+  var methods = {
+     init : function( options ) {
+     
+       return this.each(function(){
+         
+         var $this = $(this),
+             data = $this.data('bubblepop'),
+             pop = $(bubble_html),
+             inner = pop.find('.content_placeholder');
+         
+         // If the plugin hasn't been initialized yet
+        if ( ! data ) {
+         
+          pop.hide();
+          if (options != null && options.customClass != null) {
+            pop.addClass(options.customClass);
+          }
+          if (options != null &&
+              options.invert != null &&
+              options.invert) {
+            pop.addClass('inv');
+          }
+          pop.appendTo($this.wrap('<div class="bubblepop_wrapper">').parent());
+                    
+          $this.bind('click.bubblepop', function() {
+            if (options != null && 
+                options.toggleBubble != null &&
+                options.toggleBubble) {
+              $this.bubblepop('toggle');
+            } else {
+              $this.bubblepop('show');
+            }
+            return false;
+          });
+          
+          pop.find('.close_btn').bind('click.bubblepop', function() {
+            $this.bubblepop('hide');
+            return false;
+          });
+
+          $this.data('bubblepop', {
+               target : $this,
+               container : pop,
+               content : inner,
+               options : (options == null ? new Object() : options),
+               opened : false
+           });
+
+         }
+       });
+     },
+     destroy : function( ) {
+
+       return this.each(function(){
+
+         var $this = $(this);
+         var data = $this.data('bubblepop');
+         if (!data) { return; }
+
+          $this.bubblepop('hide');
+          
+          var cb = data.options.destroyCallback;
+
+          var $pop = data.container;
+          if ($pop)
+          {
+            $pop.remove();
+          }          
+          var $par = $this.parent();
+          if ($par.is('div.bubblepop_wrapper'))
+          {
+            $this.unwrap();
+          }
+          
+         // Namespacing FTW
+         $(window).unbind('.bubblepop');
+         $this.removeData('bubblepop');
+
+          if (cb)
+          {
+            cb.call($this);
+          }
+       })
+
+     },
+     toggle : function( ) {
+     
+      return this.each(function() {
+      
+        var $this = $(this);
+        if (bubble_active &&
+            bubble_active.is($this)) {
+          $this.bubblepop('hide');
+        } else {
+          $this.bubblepop('show');
+        }
+      });
+     },
+     show : function( ) { 
+      
+      // show popup
+      return this.each(function() {
+          
+        var $this = $(this);
+        var data = $this.data('bubblepop');
+        if (!data) { return; }
+        var pop = data.container;
+        if (!pop) { return; }
+        
+        // replace previous popup with current
+        if (bubble_active &&
+            !bubble_active.is($this)) {
+          bubble_active.bubblepop('hide');
+        }
+        bubble_active = $this;
+
+        // watch for clicks outside popup
+        $(document).unbind('mouseup.bubblepop');
+        $(document).unbind('touchend.bubblepop');
+        if (data.options.hideOnOutsideClick == null ||
+            data.options.hideOnOutsideClick) {
+          $(document).bind('mouseup.bubblepop', function(e) {
+              if (bubble_active) {
+                var pop = bubble_active.data('bubblepop').container;
+                if (!bubble_active.is(e.target) &&
+                    !bubble_active.has(e.target).length &&
+                    !pop.is(e.target) &&
+                    !pop.has(e.target).length) {
+                  bubble_active.bubblepop('hide');
+                }
+              }
+              return true;
+          });
+          $(document).bind('touchend.bubblepop', function(e) {
+              if (bubble_active) {
+                var pop = bubble_active.data('bubblepop').container;
+                if (!bubble_active.is(e.target) &&
+                    !bubble_active.has(e.target).length &&
+                    !pop.is(e.target) &&
+                    !pop.has(e.target).length) {
+                  bubble_active.bubblepop('hide');
+                }
+              }
+              return true;
+          });
+        }
+        $(document).unbind('keydown.bubblepop');
+        $(document).bind('keydown.bubblepop', function(e) {
+            if (bubble_active) {
+              if (e.which == 27) {
+                bubble_active.bubblepop('hide');
+                return false;
+              }
+            }
+            return true;
+        });
+        
+        // show bubble
+        var left = ($this.innerWidth() / 2) - (pop.innerWidth() / 2);
+        if (data.options.leftOffset != null) {
+          left += data.options.leftOffset;
+        }
+        pop.css('left', '' + left + 'px');
+        if (data.options.invert) {
+          pop.css('top', '' + (5 + $this.innerHeight()) + 'px');
+        } else {
+          pop.css('bottom', '' + (0 + $this.innerHeight()) + 'px');
+        }
+        
+        if ($.browser && $.browser.version < 9)
+        {
+          pop.show();
+        }
+        else
+        {
+          pop.fadeIn();
+        }
+        
+        // request content
+        if (!data.opened) {
+          $.ajax({
+            url : $this.prop('href'),
+            dataType : 'jsonp',
+            error : function(req, status, thrown) {
+              $this.bubblepop('hide');
+            },
+            success : function(resp, status, req) {
+              data.content.replaceWith(resp.html);
+              if (data.options.loadCallback) {
+                data.options.loadCallback.call($this);
+              }
+            }
+          });
+          data.opened = true;
+        }
+      
+        if (data.options.showCallback) {
+          data.options.showCallback.call($this);
+        }
+      });
+     },
+     hide : function( ) { 
+      
+      var was_active = false;
+      if (bubble_active &&
+          bubble_active.is(this)) {
+        was_active = true;
+        $(document).unbind('mouseup.bubblepop');
+        $(document).unbind('touchend.bubblepop');
+        $(document).unbind('keydown.bubblepop');
+        bubble_active = false;
+      } else if (!bubble_active) {
+        $(document).unbind('mouseup.bubblepop');
+        $(document).unbind('touchend.bubblepop');
+        $(document).unbind('keydown.bubblepop');
+      }
+      
+      return this.each(function() {
+          
+        var $this = $(this);
+        var data = $this.data('bubblepop');
+        if (!data) { return; }
+        var pop = data.container;
+        if (!pop) { return; }
+        
+        if ($.browser && $.browser.version < 9)
+        {
+          pop.hide();
+        }
+        else
+        {
+          pop.fadeOut();
+        }
+        
+        if (was_active && data.options.hideCallback) {
+          data.options.hideCallback.call($this);
+        }
+      });
+     },
+     update : function( content ) { }
+  };
+
+  $.fn.bubblepop = function( method ) {
+    
+    if ( methods[method] ) {
+      return methods[method].apply( this, Array.prototype.slice.call( arguments, 1 ));
+    } else if ( typeof method === 'object' || ! method ) {
+      return methods.init.apply( this, arguments );
+    } else {
+      $.error( 'Method ' +  method + ' does not exist on jQuery.bubblepop' );
+    }    
+  
+  };
+
+})( jQuery );

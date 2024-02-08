@@ -1,0 +1,225 @@
+$(function () {
+  
+  var showTransientMessage = function($btn, msg) {
+    $btn.popover({
+        trigger: 'manual',
+        content: msg,
+        placement: 'bottom'
+       });
+    $btn.popover('show');
+    setTimeout(function() {
+      $btn.popover('dispose');
+    }, 5000);
+  };
+
+    
+  $('.cread-state').val(readCookie('CPstate'));
+  $('.csave-state').on('change', function () {
+    setCookie('CPstate', $(this).val());
+  });
+  $('.cread-zip').val(readCookie('CPzip'));
+  $('.csave-zip').on('change', function () {
+    setCookie('CPzip', $(this).val());
+  });
+  $('.cread-jobsource').val(readCookie('CPjobsource'));
+  $('.csave-jobsource').on('change', function () {
+    setCookie('CPjobsource', $(this).val());
+  });
+  $('.cread-printname').val(readCookie('printName'));
+  $('.csave-printname').on('change', function () {
+    setCookie('printName', $(this).val());
+  });
+  $('.cread-milbranch').val(readCookie('CPbranch'));
+  $('.csave-milbranch').on('change', function () {
+    var that = this;
+    var bval = $(this).val();
+    setCookie('CPbranch', bval);
+    $('.cread-milbranch').each(function () {
+      if (this !== that) {
+        $(this).val(bval);
+      }
+    });
+    if (bval && bval.length) {
+      $('#miltab-' + bval).each(function () {
+        bootstrap.Tab.getOrCreateInstance(this).show();
+      });
+    }
+  });
+  
+  var syncMilBranch = function () {
+    var $this = $(this);
+    var value = $this.val() || '';
+    
+    $('.milex').hide();
+    $('.milex-' + value).show();
+    $('.milsearch').each(function () {
+      var $this = $(this);
+      $this.attr('placeholder', $this.data('placeholder' + value));
+    });
+  };
+  $('.milbranch').on('change', syncMilBranch);
+  $('.milbranch').trigger('change');
+  
+  $('[data-toggle="linkwarn"]').on('click', function (event) {
+    var $t = $(event.currentTarget);
+    var cval = readCookie($t.data('cookie'));
+    if (cval != 'true') {
+      // launch warning popup
+      event.preventDefault();
+      var el = document.querySelector($t.data('bsTarget'));
+      var modal = bootstrap.Modal.getInstance(el);
+      if (!modal)
+        modal = new bootstrap.Modal(el);
+      if (modal)
+        modal.show();
+      return;
+    } else {
+      // visit link directly
+      event.preventDefault();
+      var url = $t.data('track');
+      url += (url.includes('?') ? '&' : '?') + 'date=' + Date.now();
+      var jqxhr = $.ajax({
+          url : url,
+          timeout : 500
+        });
+      
+      jqxhr.always(function() {
+        jqxhr = null;
+        if ($t.attr('target')) {
+          if ($t.attr('target') != '_nopopup') {
+            window.open($t.attr('href'), $t.attr('target'));
+          }
+        } else {
+          window.location.href = $t.attr('href');
+        }
+      });
+    }
+  });
+
+  var clip = new ClipboardJS('.copy-btn');
+  clip.on('success', function(e) {
+    var $btn = $(e.trigger);
+    var msg = $btn.attr('data-success-msg');
+    if (msg) { showTransientMessage($btn, msg); }
+  });
+  clip.on('error', function(e) {
+    var $btn = $(e.trigger);
+    var msg = $btn.attr('data-error-msg');
+    if (msg) { showTransientMessage($btn, msg); }
+  });
+
+  if ($('#customform').length) {
+    var CustomWarnSelected = function () {
+      var has_sels = ($('#customform input[name="c"]:checked').length > 0);
+      $('#customform button[type="submit"]').prop('disabled', !has_sels);
+      if (has_sels) {
+        $('#customwarning').hide();
+      } else {
+        $('#customwarning').show();
+      }
+    }
+    $('#customform input[name="c"]').on('click', CustomWarnSelected);
+    CustomWarnSelected();
+  }
+
+  $('#customform input:checkbox[data-toggle="check-collapse"]').each(function () {
+    var $checkbox = $(this);
+    var $controlled = $($checkbox.data().bsTarget);
+    var $collapse = new bootstrap.Collapse($controlled[0], { toggle: false });
+    $controlled.on('shown.bs.collapse', function () {
+      if (!$controlled.data().controlChecked) {
+        $collapse.hide();
+      }
+    });
+    $controlled.on('hidden.bs.collapse', function () {
+      if ($controlled.data().controlChecked) {
+        $collapse.show();
+      }
+    });
+    
+    var handleCheck = function () {
+      if ($checkbox[0].checked) {
+        $checkbox.attr('aria-expanded', 'true');
+        $controlled.data('controlChecked', true);
+        $collapse.show();
+      } else {
+        $checkbox.attr('aria-expanded', 'false');
+        $controlled.data('controlChecked', false);
+        $collapse.hide();
+      }
+    };
+    $checkbox.on('change', handleCheck);
+    handleCheck();
+  });
+
+  $('#customform').on('submit', function (event) {
+    event.preventDefault();
+    var $this = $(this);
+    var $elements = $this.find('input, select').filter(':visible');
+    var qstring = $elements.serialize();
+    document.location = $this.attr('action') + '?' + qstring;
+  });
+  
+  $('[data-ac-toggle="autocomplete"]').each(function () {
+    $(this).autocomplete(AutocompleteData[$(this).data('acDataset')]);
+  });
+
+  $('#brightModal').on('show.bs.modal', function (event) {
+    var $this = $(this);
+    var $target = $(event.relatedTarget);
+    $this.find('.bright-occ-title').text($target.data('bm-occ'));
+
+    var $link = $this.find('.bright-occ-link');
+    $link.each(function (e) {
+      var $that = $(this);
+      $that.attr('href', $that.data('base') + $target.data('bm-ocode'));
+    });
+
+    $this.find('.bright-cond').hide();
+    $this.find('.bright-cond-' + $target.data('bm-cond')).show();
+  });
+
+  $('#hotModal').on('show.bs.modal', function (event) {
+    var $this = $(this);
+    var $target = $(event.relatedTarget);
+    $this.find('.hot-tech-title').text($target.data('hm-tech'));
+  });
+
+  $('#demandModal').on('show.bs.modal', function (event) {
+    var $this = $(this);
+    var $target = $(event.relatedTarget);
+    $this.find('.demand-tech-title').text($target.data('dm-tech'));
+    $this.find('.demand-tech-percent').text($target.data('dm-percent'));
+  });
+
+  $('#videoModal').on('show.bs.modal', function (event) {
+    window.setTimeout(() => $('.modal-backdrop').addClass('backdrop-darker'), 50);
+  });
+  $('#videoModal').on('shown.bs.modal', function (event) {
+    $('#careervid')[0].play();
+  });
+  $('#videoModal').on('hide.bs.modal', function (event) {
+    $('#careervid')[0].pause();
+  });
+
+  $('#wordCloudModal').on('show.bs.modal', function (event) {
+    window.setTimeout(() => $('.modal-backdrop').addClass('backdrop-darker'), 50);
+  });
+
+  $('#printModal').on('shown.bs.modal', function (event) {
+    $('.modal-backdrop').addClass('d-print-none');
+  });
+  $('#printButton').on('click', function (event) {
+    $('.modal-backdrop').addClass('d-print-none');
+    
+    var pName = $('#printed-for-input').val().trim();
+    if (pName.length) {
+      $('#printed-for-name').text(pName);
+      $('#printed-for-wrapper').addClass('d-print-block');
+    } else {
+      $('#printed-for-wrapper').removeClass('d-print-block');
+    }
+    window.print();
+  });
+
+});

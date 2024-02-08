@@ -1,0 +1,519 @@
+$(document).ready(function() {
+  $.fancybox.defaults.padding = 10;
+  $.fancybox.defaults.autoSize = false;
+  $.fancybox.defaults.autoResize = false;
+  $.fancybox.defaults.iframe.preload = false;
+  $.fancybox.defaults.helpers.title = null;
+  
+  try {
+    $('[data-toggle="linktrack"]').linktrack();
+  }
+  catch (error) {
+    // no response
+  }
+
+  $("#menubar > div").each(function() {
+      var nm = this.id;
+      var dummy = new popupbutton(nm.substr(0, nm.lastIndexOf("_btn")), true);
+    });
+  $("#menubarb > div").each(function() {
+      var nm = this.id;
+      var dummy = new popupbutton(nm.substr(0, nm.lastIndexOf("_btn")), false);
+    });
+  
+  $(".popup_contact").fancybox({
+        width : 600,
+        height : 530,
+        type : 'iframe'
+			});
+  $(".popup_contact_footer").fancybox({
+        width : 600,
+        height : 500,
+        type : 'iframe'
+			});
+  $(".popup_jobhelp").fancybox({
+        width : 500,
+        height : 340,
+        type : 'iframe'
+			});
+
+  $('#foot .citation').bubblepop({ customClass : 'cite_popup' });
+  
+  var disable_rating = function(item) {
+    item.bubblepop('destroy');
+  };
+  var disable_rating2 = function(item) {
+    cancel_rating(item);
+    $('#foot .thumbsline').fadeOut('medium');
+  };
+  
+  var cancel_rating = function(item) {
+    item.off('click');
+    item.on('click', function() { return false; });
+    item.children('img').fadeTo('medium', 0.33);
+    item.css('cursor', 'default');
+  };
+  
+  var focus_text = function(item) {
+    item.parent().find('.bubblepop_content textarea').first().focus();
+  };
+  
+  var fake_form = function(item) {
+    var links = item.parent().find('.bubblepop_content .ptest a');
+    links.click(function() { item.bubblepop('hide'); });
+    var form = item.parent().find('.bubblepop_content form');
+    form.submit(function() {
+      $.post(form.attr('action'), form.serialize(), function() {}, 'text');
+      item.bubblepop('hide');
+      return false;
+    });
+    focus_text(item);
+  };
+  
+  var endsWith = function(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+  };
+  
+  var add_ajax_url = function(item) {
+    var url = item.prop('href');
+    if (!url) { return; }
+    if (endsWith(url, 'ajax=1')) { return; }
+    
+    if (url.indexOf('?') == -1) {
+      item.prop('href', url + '?ajax=1');
+    } else {
+      item.prop('href', url + '&ajax=1');
+    }
+  }
+  
+  var thup = $('.thumbsup');
+  var thdn = $('.thumbsdown');
+  add_ajax_url(thup);
+  add_ajax_url(thdn);
+  
+  thup.bubblepop({
+      showCallback : function() {
+          disable_rating(thdn);
+          focus_text(thup);
+        },
+      hideCallback : function() {
+          disable_rating2(thup);
+        },
+      destroyCallback : function() {
+          cancel_rating(thup);
+        },
+      loadCallback : function() {
+          fake_form(thup);
+        }
+        
+    });
+  
+  thdn.bubblepop({
+      showCallback : function() {
+          disable_rating(thup);
+          focus_text(thdn);
+        },
+      hideCallback : function() {
+          disable_rating2(thdn);
+        },
+      destroyCallback : function() {
+          cancel_rating(thdn);
+        },
+      loadCallback : function() {
+          fake_form(thdn);
+        }
+    });
+});
+
+function addHandler(elem, action, handler)
+{
+  if (elem.addEventListener)
+  {
+    elem.addEventListener(action, handler, false);
+  }
+  else if (elem.attachEvent)
+  {
+    elem.attachEvent("on" + action, handler);
+  }
+}
+function removeHandler(elem, action, handler)
+{
+  if (elem.removeEventListener)
+  {
+    elem.removeEventListener(action, handler, false);
+  }
+  else if (elem.detachEvent)
+  {
+    elem.detachEvent("on" + action, handler);
+  }
+}
+function cancelEvent(event)
+{
+  var e = event;
+  if (!e)
+    e = window.event;
+  
+  e.returnValue = false;
+  e.cancelBubble = true;
+  if (e.stopPropagation)
+    e.stopPropagation();
+  if (e.preventDefault)
+    e.preventDefault();
+}
+
+function popup(path, width, height)
+{
+  win1 = window.open(path,
+                     "window_2",
+                     "menubar=0,toolbar=0," +
+                     "location=0,directories=0,status=0," +
+                     "scrollbars=1,resizable=1," +
+                     "width=" + width +
+                     ",height=" + height);
+  win1.focus();
+  return false;
+}
+
+function closure(which, func) {
+  return function(e) { return which[func](e); }
+}
+
+var popupmenu_allbuttons = new Array();
+
+function popupbutton(id, mouse) {
+  this.closetimer = null;
+  this.opentimer = null;
+  this.isopen = false;
+  this.mouseopen = mouse;
+  this.dopopup = false;
+  if (id == "popup_share" || id == "bpopup_share" || id == "ip_popup_share")
+    this.dopopup = true;
+  
+  this.menu = new popupmenu(id + "_menu");
+  this.elem = $('#' + id + "_btn");
+  this.href = $('#' + id + "_href");
+  this.elem.mouseover(closure(this, "enter"));
+  this.elem.mouseout(closure(this, "leave"));
+  
+  if (this.menu.hasmenu())
+  {
+    this.elem.children("ul").find("a")
+      .focus(closure(this, "enter"))
+      .blur(closure(this, "leave"))
+      .click(closure(this, "click"));
+    this.href.blur(closure(this, "leave"));
+    this.href.click(closure(this, "click"));
+  }
+  
+  popupmenu_allbuttons.push(this);
+  this.close();
+}
+
+popupbutton.prototype.enter = function(e) {
+  if (this.closetimer)
+  {
+    clearTimeout(this.closetimer);
+    this.closetimer = null;
+  }
+  if (this.isopen)
+    return false;
+
+  this.href.removeClass("popupbutton_active");
+  this.href.removeClass("popupbutton_out");
+  this.href.addClass("popupbutton_over");
+  if (this.opentimer == null)
+  {
+    // open faster if we're switching menus
+    var fast = false;
+    for (i = 0; i < popupmenu_allbuttons.length; i++)
+      if (popupmenu_allbuttons[i].isopen)
+        fast = true;
+    if (fast || this.mouseopen)
+      this.opentimer = setTimeout(closure(this, "open"), fast ? 0 : 150);
+  }
+  return false;
+}
+
+popupbutton.prototype.leave = function(e) {
+  if (this.opentimer)
+  {
+    clearTimeout(this.opentimer);
+    this.opentimer = null;
+  }
+  if (!this.isopen)
+    return this.close();
+  else
+  {
+    if (this.closetimer == null)
+      this.closetimer = setTimeout(closure(this, "close"), 300);
+  }
+  return false;
+}
+
+popupbutton.prototype.click = function(e) {
+  if (this.isopen || !this.menu.hasmenu())
+  {
+    this.menu.forceclose();
+    this.close();
+    if (this.dopopup)
+    {
+      var target = $(event.target);
+      if (target.is("img"))
+        target = target.parent();
+      if (target.is("a") && !target.attr('href').startsWith('mailto:') && (target.attr('target') != '_nopopup'))
+        return popup(target.attr('href'), '850', '500');
+    }
+    return true;
+  }
+  
+  this.open();
+  cancelEvent(e);
+  return false;
+}
+
+popupbutton.prototype.open = function(e) {
+  if (this.closetimer)
+  {
+    clearTimeout(this.closetimer);
+    this.closetimer = null;
+  }
+  if (this.opentimer)
+  {
+    clearTimeout(this.opentimer);
+    this.opentimer = null;
+  }
+
+  for (i = 0; i < popupmenu_allbuttons.length; i++)
+    if (popupmenu_allbuttons[i] != this)
+      popupmenu_allbuttons[i].close();
+  
+  this.menu.open();
+  this.href.removeClass("popupbutton_out");
+  this.href.removeClass("popupbutton_over");
+  this.href.addClass("popupbutton_active");
+  this.isopen = true;
+  return false;
+}
+
+popupbutton.prototype.close = function(e) {
+  if (this.closetimer)
+  {
+    clearTimeout(this.closetimer);
+    this.closetimer = null;
+  }
+  if (this.opentimer)
+  {
+    clearTimeout(this.opentimer);
+    this.opentimer = null;
+  }
+  
+  this.menu.close();
+  this.href.removeClass("popupbutton_active");
+  this.href.removeClass("popupbutton_over");
+  this.href.addClass("popupbutton_out");
+  this.isopen = false;
+  return false;
+}
+
+popupbutton.prototype.fastopen = function(e) {
+  if (this.closetimer)
+  {
+    clearTimeout(this.closetimer);
+    this.closetimer = null;
+  }
+  if (this.opentimer)
+  {
+    clearTimeout(this.opentimer);
+    this.opentimer = null;
+  }
+
+  for (i = 0; i < popupmenu_allbuttons.length; i++)
+    if (popupmenu_allbuttons[i] != this)
+      popupmenu_allbuttons[i].fastclose();
+  
+  this.menu.forceopen();
+  this.href.removeClass("popupbutton_out");
+  this.href.removeClass("popupbutton_over");
+  this.href.addClass("popupbutton_active");
+  this.isopen = true;
+  return false;
+}
+
+popupbutton.prototype.fastclose = function(e) {
+  if (this.closetimer)
+  {
+    clearTimeout(this.closetimer);
+    this.closetimer = null;
+  }
+  if (this.opentimer)
+  {
+    clearTimeout(this.opentimer);
+    this.opentimer = null;
+  }
+
+  this.menu.forceclose();
+  this.href.removeClass("popupbutton_active");
+  this.href.removeClass("popupbutton_over");
+  this.href.addClass("popupbutton_out");
+  this.isopen = false;
+  return false;
+}
+
+function popupmenu(id) {
+  this.elem = $('#' + id);
+  this.maxsize = 0;
+  if (this.elem)
+    this.maxsize = this.elem.children("li").length;
+  this.forceclose();
+}
+
+popupmenu.prototype.hasmenu = function() {
+  return (this.elem && this.maxsize);
+}
+
+popupmenu.prototype.open = function() {
+  if (!this.hasmenu())
+    return false;
+  
+  if (this.elem.css('display') == 'none') {
+    this.elem.css('z-index', 20);
+    this.elem.stop(true, true).slideDown(150);
+  }
+}
+
+popupmenu.prototype.forceopen = function() {
+  if (!this.hasmenu())
+    return false;
+  
+  this.elem.css('z-index', 20);
+  this.elem.stop(true, true).show();
+}
+
+popupmenu.prototype.close = function() {
+  if (!this.hasmenu())
+    return false;
+  
+  if (this.elem.css('display') != 'none') {
+    this.elem.css('z-index', 19);
+    this.elem.stop(true, true).slideUp(150);
+  }
+}
+
+popupmenu.prototype.forceclose = function() {
+  if (!this.hasmenu())
+    return false;
+  
+  this.elem.stop(true, true).hide();
+}
+
+function goForm(btn) {
+  var menu = btn.form.elements["u"];
+  window.location.href = menu.options[menu.options.selectedIndex].value;
+  return false;
+}
+
+function make_transparent(img) {
+  return false;
+}
+
+// This code was written by Tyler Akins and has been placed in the
+// public domain.  It would be nice if you left this header intact.
+// Base64 code from Tyler Akins -- http://rumkin.com
+// Additional input checking by Jeremiah Morris
+ 
+var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+ 
+function encode64(input) {
+   var output = "";
+   var chr1, chr2, chr3;
+   var enc1, enc2, enc3, enc4;
+   var i = 0;
+ 
+   if (input == null)
+      return null;
+   if (input == "")
+      return "";
+      
+   do {
+      chr1 = input.charCodeAt(i++);
+      chr2 = input.charCodeAt(i++);
+      chr3 = input.charCodeAt(i++);
+ 
+      enc1 = chr1 >> 2;
+      enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
+      enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
+      enc4 = chr3 & 63;
+ 
+      if (isNaN(chr2)) {
+         enc3 = enc4 = 64;
+      } else if (isNaN(chr3)) {
+         enc4 = 64;
+      }
+ 
+      output = output + keyStr.charAt(enc1) + keyStr.charAt(enc2) +
+         keyStr.charAt(enc3) + keyStr.charAt(enc4);
+   } while (i < input.length);
+   
+   return output;
+}
+ 
+function decode64(input) {
+   var output = "";
+   var chr1, chr2, chr3;
+   var enc1, enc2, enc3, enc4;
+   var i = 0;
+ 
+   if (input == null)
+      return null;
+      
+   // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
+   input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+ 
+   if (input == "")
+      return "";
+
+   do {
+      enc1 = keyStr.indexOf(input.charAt(i++));
+      enc2 = keyStr.indexOf(input.charAt(i++));
+      enc3 = keyStr.indexOf(input.charAt(i++));
+      enc4 = keyStr.indexOf(input.charAt(i++));
+ 
+      chr1 = (enc1 << 2) | (enc2 >> 4);
+      chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+      chr3 = ((enc3 & 3) << 6) | enc4;
+ 
+      output = output + String.fromCharCode(chr1);
+ 
+      if (enc3 != 64) {
+         output = output + String.fromCharCode(chr2);
+      }
+      if (enc4 != 64) {
+         output = output + String.fromCharCode(chr3);
+      }
+   } while (i < input.length);
+ 
+   return output;
+}
+ 
+// end Base64 code. Thanks, Tyler!
+
+function readCookie(name)
+{
+  if (name == '')
+    return '';
+  var cookies = '' + document.cookie;
+  if (cookies == '')
+    return '';
+  var start = cookies.indexOf(name);
+  if (start == -1)
+    return '';
+  var end = cookies.indexOf(';', start);
+  if (end == -1)
+    end = cookies.length;
+  return decode64(unescape(cookies.substring(start + name.length + 1, end)));
+} // end readCookie
+  
+function setCookie(name, value)
+{
+  document.cookie = name + '=' + escape(encode64(value)) + '; path=/; domain=.' + location.hostname;
+} // end setCookie

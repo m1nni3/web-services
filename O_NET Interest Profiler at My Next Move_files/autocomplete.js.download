@@ -1,0 +1,119 @@
++function ($) {
+  'use strict';
+  
+  $.fn.autocomplete = function (options) {
+    var defaults = {
+      titles: [],
+      codes: []
+    };
+    var settings = $.extend({}, defaults, options);
+
+    return this.each(function () {
+      var $input = $(this);
+      var $menu = $('#' + $input.data('acMenu'));
+      var links = [ $menu.find('.result1 a'), $menu.find('.result2 a'), $menu.find('.result3 a'), $menu.find('.result4 a'), $menu.find('.result5 a') ];
+      var dropdown = bootstrap.Dropdown.getInstance($input[0]);
+      if (!dropdown) {
+        dropdown = new bootstrap.Dropdown($input[0]);
+      }
+      
+      var has_results = false;
+      
+      var lookup = function (query) {
+        var srch = query.normalize("NFKD").replace(/[\u0300-\u036f]/g, '').trim().toLowerCase();
+        if (!srch.length) {
+          return null;
+        }
+        if (settings.codes.length && /^\d/.test(srch)) {
+          srch = srch.replaceAll(/[^\d]/g, '');
+          var res = [];
+          for (oref of settings.codes) {
+            if (oref[0].startsWith(srch)) {
+              res.push([ oref[1], oref[2] ]);
+            }
+            if (res.length >= 5) {
+              break;
+            }
+          }
+          return res;
+        } else if (settings.titles.length) {
+          srch = ' ' + srch.replaceAll(/[^a-z0-9 ]/g, '');
+          if (srch.length < 4) {
+            return null;
+          }
+          var founds = [];
+          for (var oref of settings.titles) {
+            var idx = oref[0].indexOf(srch);
+            if (idx < 0) {
+              continue;
+            }
+            if (!founds[idx]) {
+              founds[idx] = [];
+            }
+            founds[idx].push([ oref[1], oref[2] ]);
+          }
+          var res = [];
+          for (var idx in founds) {
+            for (var val of founds[idx]) {
+              res.push(val);
+              if (res.length >= 5) {
+                break;
+              }
+            }
+            if (res.length >= 5) {
+              break;
+            }
+          }
+          return res;
+        }
+        return null;
+      };
+    
+      var sync = function () {
+        $menu.removeClass('prompt');
+        $menu.removeClass('result0');
+        $menu.removeClass('result1');
+        $menu.removeClass('result2');
+        $menu.removeClass('result3');
+        $menu.removeClass('result4');
+        $menu.removeClass('result5');
+        
+        var res = lookup($input.val());
+        if (res === null) {
+          has_results = false;
+          $menu.addClass('prompt');
+        } else {
+          has_results = true;
+          $menu.addClass('result' + res.length);
+          for (var idx = 0; idx < res.length; idx++) {
+            links[idx].attr('href', links[idx].data('root') + res[idx][0]);
+            links[idx].text(res[idx][1]);
+          }
+        }
+        if (dropdown) {
+          dropdown.update();
+        }
+        if (!$menu.hasClass('show') && $input.is(':focus')) {
+          dropdown.show();
+        }
+      };
+      sync();
+      $input.on('input', sync);
+      $input.on('keydown', function (evt) {
+        if (!has_results) {
+          return;
+        }
+        if (evt.isComposing || evt.keyCode === 229) {
+          return;
+        }
+        if (evt.keyCode === 40) {
+          var el = $input[0];
+          if (el.selectionStart === el.selectionEnd && el.selectionStart == el.value.length) {
+            evt.preventDefault();
+            links[0].focus();
+          }
+        }
+      });
+    });
+  };
+}(jQuery);

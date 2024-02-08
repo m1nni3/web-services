@@ -1,0 +1,219 @@
+function showtablesort(which) {
+  var sortfield = document.getElementById("tablesort_" + which);
+  if (sortfield.style.visibility != 'visible')
+    sortfield.style.visibility = 'visible';
+  return true;
+}
+function hidetablesort(which) {
+  var sortfield = document.getElementById("tablesort_" + which);
+  if (sortfield.style.visibility != 'hidden')
+    sortfield.style.visibility = 'hidden';
+  return true;
+}
+
+
+function imageswitcher(ext, time, backindex) {
+  this.ext = ext;
+  this.front = $("#imgfront_" + ext);
+  this.back = $("#imgback_" + ext);
+  this.nextimage = backindex;
+  this.images = 30;
+  this.front.delay(time).fadeOut(180, closure(this, "switchimage"));
+}
+
+imageswitcher.prototype.switchimage = function() {
+  // swap front and back images
+  var temp = this.front;
+  this.front = this.back;
+  this.back = temp;
+  this.back.css('visibility', 'hidden');
+  this.front.css('visibility', 'visible');
+  
+  // start loading next image in back
+  this.nextimage = (this.nextimage + 6) % this.images;
+  this.back.attr("src", "image/homepage/blocks/block" + this.nextimage + ".jpg");
+  
+  // animation cycle for front image
+  this.front.fadeIn(180).delay(10240).fadeOut(180, closure(this, "switchimage"));
+}
+
+function logoswitcher(pre) {
+  this.prefix = pre;
+  this.curimage = 1;
+  this.objects = new Array();
+  
+  $("#" + this.prefix + "next").css('display', 'block').click(closure(this, "next"));
+  $("#" + this.prefix + "prev").css('display', 'block').click(closure(this, "prev"));
+  
+  for (var i = 1; i <= 20; i++)
+  {
+    var obj = $('#' + this.prefix + i);
+    if (obj.length < 1)
+      break;
+    this.images = i;
+    this.objects[i] = obj;
+    if (i == this.curimage)
+      obj.css({ 'left' : '0', 'top' : '0', 'display' : 'block', 'z-index' : '2', 'opacity' : '1.0' });
+    else
+      obj.css({ 'left' : '200px', 'top' : '0', 'display' : 'block', 'z-index' : '0', 'opacity' : '0.0' });
+  }
+  
+  this.timer = setTimeout(closure(this, "next"), 10000);
+}
+
+logoswitcher.prototype.next = function() {
+  this.switchimage(true);
+}
+logoswitcher.prototype.prev = function() {
+  this.switchimage(false);
+}
+
+logoswitcher.prototype.switchimage = function(right) {
+  if (this.timer)
+  {
+    clearTimeout(this.timer);
+    this.timer = null;
+  }
+  
+  var curimage = this.curimage;
+  var nextimage = curimage + (right ? 1 : -1);
+  if (nextimage < 1)
+    nextimage = this.images;
+  else if (nextimage > this.images)
+    nextimage = 1;
+    
+  var cur = this.objects[curimage];
+  var nxt = this.objects[nextimage];
+  this.curimage = nextimage;
+  
+  for (var i = 1; i <= this.images; i++)
+  {
+    this.objects[i].stop();
+    if (i != curimage && i != nextimage)
+      this.objects[i].css('opacity', '0.0');
+  }
+  
+  cur.css({ 'z-index' : '1', 'opacity' : '1.0', 'left' : '0' }).animate({ 'opacity' : '0.0', 'left' : (right ? '-200px' : '200px') }, 500);
+  nxt.css({ 'z-index' : '2', 'opacity' : '0.0', 'left' : (right ? '200px' : '-200px') }).animate({ 'opacity' : '1.0', 'left' : '0' }, 500);
+  
+  this.timer = setTimeout(closure(this, "next"), 10000);
+}
+
+
+// Cached options: print name, state, ZIP code
+
+function PrintNameReady()
+{
+  $('INPUT#printName').val(readCookie('printName')).change(function() {
+    var value = $(this).val();
+    if (value == null)
+      value = '';
+    setCookie('printName', value);
+    if (value.length)
+      $('#namesecprefix').removeClass('printdis');
+    else
+      $('#namesecprefix').addClass('printdis');
+  }).change();
+}
+
+function ZIPReady(id, no_reset)
+{
+  if (id == null)
+    id = 'z';
+  var cookie = readCookie('CPzip');
+  var sel = $('INPUT#' + id);
+  sel.change(function() {
+    var value = $(this).val();
+    if (value == null)
+      value = '';
+    setCookie('CPzip', value);
+  });
+  if (cookie.length && !no_reset)
+    sel.val(cookie);
+  
+}
+
+function StateReady(id, no_reset)
+{
+  if (id == null)
+    id = 's';
+  var cookie = readCookie('CPstate');
+  var sel = $('SELECT#' + id);
+  sel.change(function() {
+    var value = $(this).val();
+    if (value == null)
+      value = '';
+    setCookie('CPstate', value);
+  });
+  if (cookie.length && !no_reset)
+    sel.val(cookie);
+  
+}
+
+function SourceReady(id)
+{
+  if (id == null)
+    id = 'ps';
+  var cookie = readCookie('CPjobsource');
+  var sel = $('SELECT#' + id);
+  sel.change(function() {
+    var value = $(this).val();
+    if (value == null)
+      value = '';
+    setCookie('CPjobsource', value);
+  });
+  if (cookie.length)
+    sel.val(cookie);
+  
+}
+
+function BranchShowSamples(value)
+{
+  var printbtn = $('#print_btn');
+  var printhref = printbtn.attr('href');
+  var newref = printhref.replace(/\?.*/, '?b=' + value + '&print=1');
+  printbtn.attr('href', newref);
+  
+  BranchExample(value);
+}
+
+function BranchExample(value)
+{
+  var example = $('SPAN#milex');
+  if (example.length > 0)
+  {
+    var etext = '0963, radio chief';
+    if      (value == 'A') { etext = '15W, radio operator'; }
+    else if (value == 'N') { etext = '2445, aerial cameraman'; }
+    else if (value == 'M') { etext = '7314, helicopter crew chief'; }
+    else if (value == 'F') { etext = '11K3A, airfield operations'; }
+    else if (value == 'C') { etext = '56, search and rescue'; }
+    
+    example.text(etext);
+  }
+  
+  $.each(['A', 'N', 'M', 'F', 'C', ''], function(index, br) {
+      $('#miltitles' + br).css('display', (value == br ? 'block' : 'none'));
+    });
+}
+  
+
+function BranchReady(id)
+{
+  if (id == null)
+    id = 'b';
+  var cookie = readCookie('CPbranch');
+  var sel = $('SELECT#' + id);
+  sel.change(function() {
+    var value = $(this).val();
+    if (value == null)
+      value = '';
+    // setCookie('CPbranch', value);
+    
+    BranchExample(value);
+  });
+  if (cookie.length) {
+    sel.val(cookie);
+    BranchExample(cookie);
+  }
+}
